@@ -1,7 +1,13 @@
 FROM golang:1-alpine AS build
 WORKDIR /build
 COPY . .
-RUN GOPROXY=off CGO_ENABLED=0 go build -trimpath
+RUN mv /build/.github/scripts/fake-git.sh /usr/local/bin/git && \
+    mkdir -p .git && \
+    apk add bash
+ARG FAKEGIT_GO_SEMVER
+ARG FAKEGIT_GO_REVISION
+ARG FAKEGIT_GO_TIMESTAMP
+RUN GOPROXY=off CGO_ENABLED=0 go build -buildvcs=true -trimpath
 
 # Using latest may break at some point, but will hopefully be convenient most of the time.
 FROM alpine:latest

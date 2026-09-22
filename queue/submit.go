@@ -18,6 +18,7 @@ import (
 	"github.com/mjl-/mox/config"
 	"github.com/mjl-/mox/dns"
 	"github.com/mjl-/mox/dsn"
+	"github.com/mjl-/mox/message"
 	"github.com/mjl-/mox/mlog"
 	"github.com/mjl-/mox/mox-"
 	"github.com/mjl-/mox/sasl"
@@ -223,6 +224,18 @@ func deliverSubmit(qlog mlog.Log, resolver dns.Resolver, dialer smtpclient.Diale
 			m0.MsgPrefix = stripDKIMHeader(m0.MsgPrefix)
 			newPrefixSize := int64(len(m0.MsgPrefix))
 			size = size - (originalPrefixSize - newPrefixSize)
+		}
+		if transport.ResetMailFrom {
+			msgFrom, _, _, err := message.From(qlog.Logger, true, f, nil)
+			if err != nil {
+				qlog.Errorx("parsing message to set MAIL FROM to header From", err)
+				submiterr = fmt.Errorf("transport %s: parsing message to set MAIL FROM to header From: %w", transportName, err)
+				failMsgsDB(qlog, msgs, m0.DialedIPs, backoff, dsn.NameIP{}, submiterr)
+				return
+			}
+			m0.SenderLocalpart = msgFrom.Localpart
+			m0.SenderDomain = dns.IPDomain{Domain: msgFrom.Domain}
+			m0.SenderDomainStr = msgFrom.Domain.Name()
 		}
 		msgr = store.FileMsgReader(m0.MsgPrefix, f)
 		defer func() {

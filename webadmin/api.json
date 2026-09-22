@@ -6973,6 +6973,13 @@
 					"Typewords": [
 						"bool"
 					]
+				},
+				{
+					"Name": "ResetMailFrom",
+					"Docs": "",
+					"Typewords": [
+						"bool"
+					]
 				}
 			]
 		},

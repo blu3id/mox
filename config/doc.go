@@ -647,6 +647,10 @@ See https://pkg.go.dev/github.com/mjl-/sconf for details.
 					Mechanisms:
 						-
 
+				# If set MAIL FROM is reset to the message header From before submiting.
+				# (optional)
+				ResetMailFrom: false
+
 			# Submission SMTP over a plain TCP connection (possibly with STARTTLS) to submit
 			# email to a remote queue. (optional)
 			Submission:
@@ -680,6 +684,10 @@ See https://pkg.go.dev/github.com/mjl-/sconf for details.
 					Mechanisms:
 						-
 
+				# If set MAIL FROM is reset to the message header From before submiting.
+				# (optional)
+				ResetMailFrom: false
+
 			# SMTP over a plain connection (possibly with STARTTLS), typically for
 			# old-fashioned unauthenticated relaying to a remote queue. (optional)
 			SMTP:
@@ -712,6 +720,10 @@ See https://pkg.go.dev/github.com/mjl-/sconf for details.
 					# server to prevent mechanism downgrade attacks. (optional)
 					Mechanisms:
 						-
+
+				# If set MAIL FROM is reset to the message header From before submiting.
+				# (optional)
+				ResetMailFrom: false
 
 			# Like regular direct delivery, but makes outgoing connections through a SOCKS
 			# proxy. (optional)

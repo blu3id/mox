@@ -251,6 +251,7 @@ type TransportSMTP struct {
 	STARTTLSInsecureSkipVerify bool      `sconf:"optional" sconf-doc:"If set an unverifiable remote TLS certificate during STARTTLS is accepted."`
 	NoSTARTTLS                 bool      `sconf:"optional" sconf-doc:"If set for submission or smtp transport, do not attempt STARTTLS on the connection. Authentication credentials and messages will be transferred in clear text."`
 	Auth                       *SMTPAuth `sconf:"optional" sconf-doc:"If set, authentication credentials for the remote server."`
+	ResetMailFrom              bool      `sconf:"optional" sconf-doc:"If set MAIL FROM is reset to the message header From before submiting."`
 
 	DNSHost dns.Domain `sconf:"-" json:"-"`
 }

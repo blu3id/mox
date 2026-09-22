@@ -623,6 +623,22 @@ func TestQueue(t *testing.T) {
 		t.Fatalf("expected net.Dialer as dialer")
 	}
 
+	// Add a message to be delivered with submit because of explicitly configured transport, that resets MAIL FROM.
+	altpath := smtp.Path{Localpart: "mjl+alt", IPDomain: dns.IPDomain{Domain: dns.Domain{ASCII: "mox-alt.example"}}}
+	qml = []Msg{MakeMsg(altpath, path, false, false, int64(len(testmsg)), "<test@localhost>", nil, nil, time.Now(), "test")}
+	err = Add(ctxbg, pkglog, "mjl", mf, qml...)
+	tcheck(t, err, "add message to queue for delivery")
+	transportSubmitResetMailFrom := "submitresetmailfrom"
+	n, err = TransportSet(ctxbg, Filter{IDs: []int64{qml[0].ID}}, transportSubmitResetMailFrom)
+	tcheck(t, err, "set transport")
+	if n != 1 {
+		t.Fatalf("TransportSet changed %d messages, expected 1", n)
+	}
+	wasNetDialer = testDeliver(fakeSubmitServer)
+	if !wasNetDialer {
+		t.Fatalf("expected net.Dialer as dialer")
+	}
+
 	// Add a message to be delivered with submit because of explicitly configured transport, that uses TLS.
 	qml = []Msg{MakeMsg(path, path, false, false, int64(len(testmsg)), "<test@localhost>", nil, nil, time.Now(), "test")}
 	err = Add(ctxbg, pkglog, "mjl", mf, qml...)
